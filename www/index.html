@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hello</title>
+</head>
+<body>
+  <p id="greetings1">(loading...)</p>
+  <p id="greetings2">(loading...)</p>
+  <script type="text/javascript">
+    const greetings = msg => Module.ccall(
+      'greetings', 'number', [ 'string' ], [ msg ]
+    )
+    const greetingsAsync = async (msg, delay) => await Module.ccall(
+      'greetingsAsync' , undefined, [ 'string', 'number' ], [ msg, delay ], 
+      { async: true }
+    )
+    var Module = {
+      onRuntimeInitialized: async () => {
+        const sampleReturn = greetings("world")
+        
+        document.getElementById('greetings1').innerText = Module.sampleGreetings1
+        await greetingsAsync("world", sampleReturn)
+        document.getElementById('greetings2').innerText = Module.sampleGreetings2
+      }
+    };
+  </script>
+  <script type="text/javascript" src="a.out.js"></script>
+</body>
+</html>
+ 
+ 

@@ -1,0 +1,16 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "node-terminal",
+            "name": "Rebuild all",
+            "command": "bash ./build.sh ${workspaceFolder} ${config:livePreview.portNumber}",
+            "request": "launch", 
+            "serverReadyAction": {
+                "action": "openExternally",
+                "pattern": "\\blistening on\\s+(https?://\\S+)",
+                "uriFormat": "%s"
+            }
+        }
+    ]
+}
