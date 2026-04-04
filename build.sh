@@ -3,12 +3,12 @@
 # Usage : build.sh src_path port [emsdk_path]
 
 # Here are the exported methods with a leading '_' 
-EXPORT=_greetings,_greetingsAsync
+EXPORT=_wino_setup,_wino_loop
 
 EMSDK_PATH=${3:-/workspaces/emsdk}
 CC=emcc
-SRC="$1/*.cpp"
-INC=
+SRC="$1/*.cpp $1/wino/*.cpp"
+INC=-Iwino
 METHODS=ccall
 OPT="-gsource-map -sASYNCIFY"
 OUTPUT=$1/www/a.out.js

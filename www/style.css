@@ -155,7 +155,7 @@ a.callbtn {
     display: inline-block;
 }
 
-.panel a.sel, .panel a.btn:hover {
+.panel a.sel {
     background-image: url('assets/btn-light.png');
     background-repeat: no-repeat;
     background-size: 59px 230px;
@@ -172,6 +172,6 @@ a.callbtn {
     width: 166px;
     height: 126px;
 }
-.panel .btnstop.sel, .panel .btnstop:hover {
+.panel .btnstop.sel {
     background-image: url('assets/stop-light.png');
 }

@@ -14,8 +14,8 @@
             <div class="door right"></div>
             <div class="stair-door"></div>
             <div class="wall">
-                <a href="#" class="callbtn up">Up</a>
-                <a href="#" class="callbtn down">Down</a>
+                <a href="#" data-NeoPixel="2" class="callbtn up"  >Up</a>
+                <a href="#" data-NeoPixel="1" class="callbtn down">Down</a>
             </div>
         </div>
         <div class="floor" id="floor0">
@@ -23,7 +23,7 @@
             <div class="door right"></div>
             <div class="stair-door"></div>
             <div class="wall">
-                <a href="#" class="callbtn up">Up</a>
+                <a href="#" data-NeoPixel="9" class="callbtn up">Up</a>
            </div>
         </div>
         <div class="floor" id="floor3">
@@ -31,8 +31,8 @@
             <div class="door right"></div>
             <div class="stair-door"></div>
             <div class="wall">
-                <a href="#" class="callbtn up">Up</a>
-                <a href="#" class="callbtn down">Down</a>
+                <a href="#" data-NeoPixel="15" class="callbtn up">Up</a>
+                <a href="#" data-NeoPixel="14" class="callbtn down">Down</a>
             </div>
         </div>
         <div class="floor" id="floor2">
@@ -40,8 +40,8 @@
             <div class="door right"></div>
             <div class="stair-door"></div>
             <div class="wall">
-                <a href="#" class="callbtn up">Up</a>
-                <a href="#" class="callbtn down">Down</a>
+                <a href="#" data-NeoPixel="13" class="callbtn up">Up</a>
+                <a href="#" data-NeoPixel="12" class="callbtn down">Down</a>
             </div>
         </div>
         <div class="floor" id="floor5">
@@ -50,7 +50,7 @@
             <div class="door right"></div>
             <div class="stair-door"></div>
             <div class="wall">
-                <a href="#" class="callbtn down">Down</a>
+                <a href="#" data-NeoPixel="18" class="callbtn down">Down</a>
             </div>
         </div>
         <div class="floor" id="floor4">
@@ -58,28 +58,54 @@
             <div class="door right"></div>
             <div class="stair-door"></div>
             <div class="wall">
-                <a href="#" class="callbtn up">Up</a>
-                <a href="#" class="callbtn down">Down</a>
+                <a href="#" data-NeoPixel="17" class="callbtn up">Up</a>
+                <a href="#" data-NeoPixel="16" class="callbtn down">Down</a>
             </div>
         </div>
         <div class="panel">
-            <div class="screen backlight"></div>
+            <div class="screen"></div>
             <ul>
-                <li><a href="#" class="btn row0">3</a></li>
-                <li><a href="#" class="btn row0">4</a></li>
-                <li><a href="#" class="btn row1">1</a></li>
-                <li><a href="#" class="btn row1">2</a></li>
-                <li><a href="#" class="btn row2">-1</a></li>
-                <li><a href="#" class="btn row2">0</a></li>
-                <li><a href="#" class="btn row3">&gt;&lt;</a></li>
-                <li><a href="#" class="btn row3">&lt;&gt;</a></li>
+                <!--  Key     data-Keypad
+                    1 2 3 A |  0  1  2  3
+                    4 5 6 B |  4  5  6  7
+                    7 8 9 C |  8  9 10 11
+                    * 0 # D | 12 13 14 15
+                -->
+                <li><a href="#" class="btn row0" data-NeoPixel="4" data-Keypad="4">3</a></li>
+                <li><a href="#" class="btn row0" data-NeoPixel="5" data-Keypad="5">4</a></li>
+                <li><a href="#" class="btn row1" data-NeoPixel="2" data-Keypad="1">1</a></li>
+                <li><a href="#" class="btn row1" data-NeoPixel="3" data-Keypad="2">2</a></li>
+                <li><a href="#" class="btn row2" data-NeoPixel="0" data-Keypad="13">-1</a></li>
+                <li><a href="#" class="btn row2" data-NeoPixel="1" data-Keypad="0">0</a></li>
+
+                <li><a href="#" class="btn row3" data-NeoPixel="6" data-Keypad="7">&gt;&lt;</a></li>
+                <li><a href="#" class="btn row3" data-NeoPixel="7" data-Keypad="11">&lt;&gt;</a></li>
             </ul>
-            <a href="#" class="btnstop"></a>
+            <a href="#" class="btnstop" data-NeoPixel="8" data-Keypad="15"></a>
         </div>
     </div>
-    <!--div class="sprite npc000 left step0">
-    </div-->
     <script>
+        window.wasmLoaded = new Promise(resolve => window.Module = { 
+            onRuntimeInitialized: resolve 
+        });
+    </script>
+    <script src="a.out.js"></script>
+    <script type="module">
+        import Wino from "./js/Wino.js"
+        import Adafruit_NeoPixel from "./js/Adafruit_NeoPixel.js"
+        import Keypad from "./js/Keypad.js"
+
+        const NEOPIXEL_CSS = 'sel'
+        const PIN_KEYPAD_ROWS = [ 11, 10, 9, 8 ]
+        const PIN_KEYPAD_COLS = [  7,  6, 5, 4 ]
+        const PIN_NEOPIXEL = 2
+        
+        await window.wasmLoaded
+        const wino = new Wino(Module, [
+            new Keypad           (Module, PIN_KEYPAD_ROWS, PIN_KEYPAD_COLS),
+            new Adafruit_NeoPixel(Module, PIN_NEOPIXEL, (l, v) => Adafruit_NeoPixel.OnOff(l, v, NEOPIXEL_CSS))
+        ]);
+
         const FLOOR_COUNT = 6;
         const FLOORS_BY_COLUMN = 2;
         const CABIN_FLOOR_X = 230;
@@ -135,31 +161,6 @@
                 cabin.style.left = `${CABIN_FLOOR_X + COLUMN_WIDTH * Math.floor(position / COLUMN_HEIGHT)}px`;
             }
         }
-
-        let dirElevator = 0;
-        let dirDoors = 0;
-        document.onkeydown = e => {
-            e.preventDefault();
-            switch(e.key) {
-                case 'ArrowUp':    dirElevator =  1; break;
-                case 'ArrowDown':  dirElevator = -1; break;
-                case 'ArrowLeft':  dirDoors = -1; break;
-                case 'ArrowRight': dirDoors =  1; break;
-            }
-        }
-        document.onkeyup= e => {
-            e.preventDefault();
-            switch(e.key) {
-                case 'ArrowUp': case 'ArrowDown':  dirElevator = 0; break;
-                case 'ArrowLeft': case 'ArrowRight': dirDoors =  0; break;
-            }
-        }
-
-        requestAnimationFrame(function animate() {
-            moveElevator(dirElevator);
-            moveDoors(currentFloor(), dirDoors);
-            requestAnimationFrame(animate);
-        });
-</script>
+    </script>
 </body>
 </html>

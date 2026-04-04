@@ -1,5 +1,6 @@
 {
     "C_Cpp.default.includePath": [
-        "/workspaces/emsdk/upstream/emscripten/system/include"
+        "/workspaces/emsdk/upstream/emscripten/system/include",
+        "/workspaces/elevator/wino"
     ]
 }
