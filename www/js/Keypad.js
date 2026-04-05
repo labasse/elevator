@@ -1,30 +1,22 @@
-export default class Keypad 
-{
-    #cmodule;
+import ComponentBase from "./ComponentBase.js";
+
+export default class Keypad extends ComponentBase {
     #keyIndex = undefined;
     #keyCount;
 
     constructor(cmodule, rows, cols, dataSuffix) {
-        const dataPrefix = 'data-pad'
-        const id = JSON.stringify([rows, cols])
-        const dataAttr = dataSuffix 
-            ? `${dataPrefix}-${dataSuffix}` 
-            : dataPrefix
-
-        cmodule.Keypad ??= {}
-        cmodule.Keypad[id] = this
-
-        this.#cmodule = cmodule
+        super(cmodule, `Keypad/${JSON.stringify([rows, cols])}`)
         this.#keyCount = rows.length * cols.length
-        document.querySelectorAll(`*[${dataAttr}]`).forEach(node => {
-            const index = parseInt(node.getAttribute(dataAttr))
+        this.mapNodes('pad', dataSuffix, (node, attrVal) => {
+            const index = parseInt(attrVal)
 
             if(index===NaN || index < 0 || index >= this.#keyCount) {
-                console.warn(`Bad '${dataAttr}' for element ${node}`)
+                console.warn(`Attribute 'data-pad' is Nan or not in [0..${this.#keyCount}[ for element ${node}`)
                 return
             }
-            node.addEventListener('mousedown', _ => this.#cmodule.Keypad[id].setPressedKeyIndex(index))
-            node.addEventListener('mouseup'  , _ => this.#cmodule.Keypad[id].setPressedKeyIndex(undefined))
+            const keypad = this
+            node.addEventListener('mousedown', _ => keypad.setPressedKeyIndex(index))
+            node.addEventListener('mouseup'  , _ => keypad.setPressedKeyIndex(undefined))
         })
     }
     setPressedKeyIndex(index) {

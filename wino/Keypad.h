@@ -1,21 +1,20 @@
 #ifndef _KEYPAD_H
 #define _KEYPAD_H
 
-#include "wino.h"
+#include <string>
 
-class Keypad {
+#include "ComponentBase.h"
+
+class Keypad : public ComponentBase {
 public:
 	Keypad(char *userKeymap, byte *row, byte *col, byte numRows, byte numCols);  
-	Keypad(const Keypad& other);  
-	virtual ~Keypad();  
 
 	char getKey();
 	bool isPressed(char keyChar);
+protected:
+	void buildKeyName(char buf[], uint16_t cbuf) const override;
 private:
-	bool plugged();
-
-    char *keys;
-	char *id;
+	std::string keys, keyName;
     int keyMax;
 };
 

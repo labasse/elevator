@@ -1,21 +1,15 @@
-export default class Adafruit_NeoPixel
-{
-    #leds;
-    
-    constructor(cmodule, pin, changedCallback, dataSuffix) {
-        const dataPrefix = 'data-led'
-        const dataAttr = dataSuffix 
-            ? `${dataPrefix}-${dataSuffix}` 
-            : $dataPrefix
+import ComponentBase from "./ComponentBase.js"
 
-        cmodule.Adafruit_NeoPixel ??= []
-        cmodule.Adafruit_NeoPixel[pin] = this
-        this.#leds = []
-        document.querySelectorAll(`*[${dataAttr}]`).forEach(e => {
-            const index = parseInt(e.getAttribute(dataAttr))
+export default class Adafruit_NeoPixel extends ComponentBase {
+    #leds = []
+    
+    constructor(cmodule, pin, changedCallback, dataAttrSuffix = undefined) {
+        super(cmodule, `Adafruit_NeoPixel/${pin}`)
+        this.mapNodes('led', dataAttrSuffix, (e, attrVal) => {
+            const index = parseInt(attrVal)
             
             if(index === NaN) {
-                console.warn(`Bad '${dataAttr}' for element ${e}`)
+                console.warn(`Nan attribute 'data-led' for element ${e} : led ignored`)
             }
             else {
                 this.#leds[index] = { 

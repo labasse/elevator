@@ -121,14 +121,16 @@ extern "C" void espInit();
 
 #define ADAFRUIT_NEOPIXEL_MAXLEDS 256
 
-class Adafruit_NeoPixel {
+#include "ComponentBase.h"
+
+class Adafruit_NeoPixel : public ComponentBase {
   uint8_t leds[ADAFRUIT_NEOPIXEL_MAXLEDS][4]; // rgbw
   uint16_t count, pin;
 public:
   Adafruit_NeoPixel(uint16_t n, int16_t pin = 6, neoPixelType ignored = 0);
 
-  bool begin(void);
-  void show(void);
+  inline bool begin(void);
+  inline void show(void);
   void setPixelColor(uint16_t n, uint8_t r, uint8_t g, uint8_t b, uint8_t w);
 
   inline void setPixelColor(uint16_t n, uint8_t r, uint8_t g, uint8_t b) { setPixelColor(n, r, g, b, 0); }
@@ -137,6 +139,13 @@ public:
   static inline uint32_t Color(uint8_t r, uint8_t g, uint8_t b) {
     return ((uint32_t)r << 16) | ((uint32_t)g << 8) | b;
   }
+protected:
+  void buildKeyName(char buf[], uint16_t cbuf) const override;
+private:
+  bool show(const char *warn);
 };
+
+bool Adafruit_NeoPixel::begin() { return show("Keypad not connected"); }
+void Adafruit_NeoPixel::show () { show(nullptr); }
 
 #endif

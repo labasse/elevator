@@ -1,69 +1,44 @@
 #include "Keypad.h"
 
 #include <cstdio>
-#include <cstring>
 #include <cassert>
+#include <sstream>
 #include <emscripten/emscripten.h>
 
-static void stringify(char* dest, int max, byte *vals, byte nvals) {
+static std::ostringstream& stringify(std::ostringstream& dest, byte *vals, byte nvals) {
     const char *sep = "";
     
     for(int i=0; i<nvals; i++) {
-        for(; *dest; dest++, max--)
-            ;
-        snprintf(dest, max, "%s%d", sep, vals[i]);
+        dest << sep << (int)vals[i];
         sep=",";
     }
+    return dest;
 }
 
-Keypad::Keypad(char *userKeymap, byte *row, byte *col, byte numRows, byte numCols) {
-    int max = 4*(numRows+numCols)+5;
-    char buf[max];
+Keypad::Keypad(char *userKeymap, byte *row, byte *col, byte numRows, byte numCols) :
+    keyMax(numRows * numCols),
+    keys (userKeymap)
+{
+    std::ostringstream s;
     
-    strncpy(buf, "[[", max); 
-    stringify(buf, max, row, numRows);
-    strncat(buf, "],[", max);
-    stringify(buf, max, col, numRows);
-    strncat(buf, "]]", max);
-
-    keyMax = numRows * numCols;
-    assert(strlen(userKeymap) >= keyMax);
-    keys = strdup(userKeymap);
-    id = strdup(buf);
+    s << "Keypad/[[";
+    stringify(s, row, numRows) << "],[";
+    stringify(s, col, numCols) << "]]";
+    keyName = s.str();
+    assert(keys.size() >= keyMax);
 }
 
-Keypad::Keypad(const Keypad& other) {
-    keyMax = other.keyMax;
-    keys = strdup(other.keys);
-    id = strdup(other.id);
-} 
-
-Keypad::~Keypad() {
-    free(keys);
-    free(id);
-}
-
-bool Keypad::plugged() {
-    return EM_ASM_INT({
-        const id = UTF8ToString($0);
-        if(Module.Keypad[id] === undefined) {
-            console.warn("No Keypad plugged on "+id);
-            return 0
-        }
-        return 1;
-    }, id) == 1;
+void Keypad::buildKeyName(char buf[], uint16_t cbuf) const {
+    keyName.copy(buf, cbuf);
 }
 
 char Keypad::getKey() {
-    char key = '\0';
-
-    if(plugged()) {
-        auto index = EM_ASM_INT({
-            return Module.Keypad?.[UTF8ToString($0)]?.getPressedKeyIndex() ?? $1
-        }, id, keyMax);
-        if(index < keyMax)
-            key = keys[index];
-    }
+    auto key = '\0';
+    auto index = EM_ASM_INT({
+        return Module.Wino?.byId($0)?.getPressedKeyIndex() ?? $1
+    }, getId(), keyMax);
+    if(index < keyMax)
+        key = keys[index];
     return key;
 }
 
