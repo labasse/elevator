@@ -185,6 +185,7 @@ li.segoff { background-position-x: 0; }
     line-height: 25px;
     margin: 0;
     padding: 0;
+    white-space: pre;
 }
 
 .screen.backlight p {

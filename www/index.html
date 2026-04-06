@@ -77,7 +77,7 @@
             </div>
         </div>
         <div class="panel">
-            <div class="screen" data-lcd-backlight>
+            <div class="screen" data-lcd-backlight="backlight">
                 <p data-lcd-line="0"></p>
                 <p data-lcd-line="1"></p>
             </div>
@@ -111,6 +111,7 @@
         import Wino from "./js/Wino.js"
         import Adafruit_NeoPixel from "./js/Adafruit_NeoPixel.js"
         import Adafruit_7segment from "./js/Adafruit_7segment.js"
+        import LiquidCrystal_I2C from "./js/LiquidCrystal_I2C.js"
         import Keypad from "./js/Keypad.js"
 
         const NEOPIXEL_CSS = 'sel'
@@ -122,7 +123,8 @@
         const wino = new Wino(Module, [
             new Keypad           (Module, PIN_KEYPAD_ROWS, PIN_KEYPAD_COLS),
             new Adafruit_NeoPixel(Module, PIN_NEOPIXEL, (l, v) => Adafruit_NeoPixel.OnOff(l, v, NEOPIXEL_CSS), 'neo'),
-            new Adafruit_7segment(Module, 0x71, (seg, val) => seg.classList.toggle('sel', val), '71')
+            new Adafruit_7segment(Module, 0x71, (seg, val) => seg.classList.toggle('sel', val), '71'),
+            new LiquidCrystal_I2C(Module, 0x20)
         ]);
 
         const FLOOR_COUNT = 6;

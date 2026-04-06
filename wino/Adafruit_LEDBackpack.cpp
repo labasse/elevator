@@ -133,7 +133,7 @@ void Adafruit_7segment::buildKeyName(char buf[], uint16_t cbuf) const {
 
 void Adafruit_7segment::writeDisplay() {
     EM_ASM(
-        Module.Wino.byId($0)?.setDigits([$1, $2, $3, $4, $5]), 
+        Module.Wino.byId($0)?.setDigits?.([$1, $2, $3, $4, $5]), 
         getId(), 
         display[0], display[1], 
         display[2], 
