@@ -13,7 +13,7 @@
 static byte rows[] = PIN_KEYMAP_ROWS;
 static byte cols[] = PIN_KEYMAP_COLS;
 
-static Keypad _keys(KEYMAP, rows, cols, sizeof(rows)/sizeof(byte), sizeof(cols)/sizeof(byte));
+static Keypad _keys(const_cast<char*>(KEYMAP), rows, cols, sizeof(rows)/sizeof(byte), sizeof(cols)/sizeof(byte));
 static Adafruit_NeoPixel _leds(MAX_LEDS, PIN_LEDS, NEO_GRB + NEO_KHZ800);
 static LiquidCrystal_I2C _lcd(I2C_LCD , MAX_LCD_COLS, 2);
 
