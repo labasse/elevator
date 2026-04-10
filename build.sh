@@ -16,5 +16,8 @@ OUTPUT=$1/www/a.out.js
 source $EMSDK_PATH/emsdk_env.sh
 $CC $SRC -o $OUTPUT $OPT $INC -sEXPORTED_FUNCTIONS=$EXPORT -sEXPORTED_RUNTIME_METHODS=$METHODS
 
-echo Live preview should be listening on https://${CODESPACE_NAME}-$2.${GITHUB_CODESPACES_PORT_FORWARDING_DOMAIN}/www/
-
+if [ $? -eq 0 ]; then
+    echo Live preview should be listening on https://${CODESPACE_NAME}-$2.${GITHUB_CODESPACES_PORT_FORWARDING_DOMAIN}/www/
+else
+    echo "Compilation failed, previous version still execute." >&2
+fi
