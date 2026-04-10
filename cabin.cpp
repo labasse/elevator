@@ -39,33 +39,25 @@ int cabin_move(timer_ms& start, int to_floor, unsigned long duration) {
   return _current_floor;
 }
 
-/**
- * @brief Computes the vertical trajectory required to reach a target.
- * Compares the internal cabin state with the requested destination to determine 
- * the necessary movement vector.
- * @param to_floor The index of the target floor.
- * @return int The movement orientation:
- * - 1: Ascending (target is above).
- * - -1: Descending (target is below).
- * - 0: Stationary (target reached).
- */
 int motor_dir(int to_floor) {
-  // TODO
+  if(_current_floor < to_floor) {
+    return 1;
+  }
+  if(_current_floor > to_floor) {
+    return -1;
+  }
   return 0;
 }
 
-/**
- * @brief Controls the physical H-bridge hardware interface.
- * Translates abstract direction commands into logic levels for a dual-pin motor 
- * driver. This function handles the electrical switching required to change 
- * motor polarity or bring the cabin to a complete halt.
- * @param pinA The GPIO pin connected to the first input of the H-bridge.
- * @param pinB The GPIO pin connected to the second input of the H-bridge.
- * @param dir The desired rotation polarity:
- * - Positive value: Activates forward/upward rotation.
- * - Negative value: Activates reverse/downward rotation.
- * - Zero: Disables both outputs to brake/stop the motor.
- */
 void motor(int pinA, int pinB, int dir) {
-  // TODO
+  int a = LOW, b = LOW;
+  
+  if(dir < 0) {
+    b = HIGH;
+  }
+  else if(dir > 0) {
+    a = HIGH;
+  }
+  digitalWrite(pinA, a);
+  digitalWrite(pinB, b);
 } 

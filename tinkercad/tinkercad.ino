@@ -217,12 +217,26 @@ int cabin_move(timer_ms& start, int to_floor, unsigned long duration) {
 }
 
 int motor_dir(int to_floor) {
-  // TODO
+    if(_current_floor < to_floor) {
+    return 1;
+  }
+  if(_current_floor > to_floor) {
+    return -1;
+  }
   return 0;
 }
 
 void motor(int pinA, int pinB, int dir) {
-  // TODO
+  int a = LOW, b = LOW;
+  
+  if(dir < 0) {
+    b = HIGH;
+  }
+  else if(dir > 0) {
+    a = HIGH;
+  }
+  digitalWrite(pinA, a);
+  digitalWrite(pinB, b);
 } 
 
 /////////////////////////////////////////////////////////
