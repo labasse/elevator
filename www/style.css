@@ -59,30 +59,40 @@ body {
 .left.open  { left: 134px; }
 .right.open { left: 410px; }
 
-.wall {
+.wall, .corridor .exit {
     position: absolute;
     width: 513px;
+}
+.wall {
     height: 430px;
     background-image: url('assets/floor.png');
 }
 
-/* Stair door */
+/* Stairs */
 
-.stair-door {
+.stairs {
     position: absolute;
-    top: 157px;
-    left: 22px;
+    top: 156px;
+    left: 21px;
     width: 97px;
     height: 215px;
+    overflow: hidden;
+}
+
+.stair-door {
+    margin:0;
+    position: absolute;
     background-image: url('assets/door.png');
     background-repeat: no-repeat;
     background-size: 100% 100%;
-    transition: background-size 1s;
+    transition: width 1s;
+    width: 97px;
+    height: 215px;
 }
 
-.stair-door.open, .floor:hover .stair-door {
-    background-size: 30% 100%;
-    transition: background-size 1s;
+.stair-door.open, .floor:hover .stair-door, .stair-door:nth-child(2) {
+    width: 32px;
+    transition: width 1s;
 }
 
 /* Call buttons */
@@ -174,6 +184,7 @@ li.segoff { background-position-x: 0; }
     width: 140px;
     height: 64px;
     padding: 32px 0 0 26px;
+    pointer-events: none;
 }
 
 .screen p {
@@ -186,6 +197,7 @@ li.segoff { background-position-x: 0; }
     margin: 0;
     padding: 0;
     white-space: pre;
+    pointer-events: none;
 }
 
 .screen.backlight p {
@@ -243,3 +255,141 @@ li.segoff { background-position-x: 0; }
 .panel .btnstop.sel {
     background-image: url('assets/stop-light.png');
 }
+
+/* npc */
+.npc {
+    background-image: url('assets/npc.png');
+}
+
+li:has(a:hover) .mood {
+    display: block;
+}
+
+.npc a {
+    display: block;
+    position: absolute;
+    margin-left: 32px;
+    margin-top: 10px;
+    width: 50px;
+    height: 50px;
+}
+
+.mood {
+    display: none;
+    position: absolute;
+    top: -60px;
+    left: 60px;
+    width: 46px;
+    height: 39px;
+    background-image: url('assets/mood.png');
+    z-index: 20;
+    padding: 13px 15px;
+    font-size: 1.5em;
+    font-family: Arial, Helvetica, sans-serif;
+}
+.wait0, .enter { background-position-x: 0; }
+.wait1, .call { background-position-x: -76px; }
+.wait2, .stairs { background-position-x: -152px; }
+.enter, .stairs, .call { background-position-y: -69px; }
+
+.ch0 { background-position-x: 0; }
+.ch1 { background-position-x: -100%; }
+.ch2 { background-position-x: -200%; }
+.ch3 { background-position-x: -300%; }
+.ch4 { background-position-x: -400%; }
+.ch5 { background-position-x: -500%; }
+.ch6 { background-position-x: -600%; }
+.ch7 { background-position-x: -700%; }
+.ch8 { background-position-x: -800%; }
+.ch9 { background-position-x: -900%; }
+.chA { background-position-x: -1000%; }
+.chB { background-position-x: -1100%; }
+.chC { background-position-x: -1200%; }
+.chD { background-position-x: -1300%; }
+.chE { background-position-x: -1400%; }
+.chF { background-position-x: -1500%; }
+
+.stairs ul, #cabin ul, .corridor ul {
+    position: relative;
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+.stairs li, #cabin li, .corridor li {
+    position: absolute;
+    margin:0;
+    padding:0;
+}
+
+.stairs .mood {
+    top: -30px;
+}
+
+#cabin .npc, .stairs .npc {
+    width:100px;
+    height: 177px;
+    background-size: auto 177px;
+    position: absolute;
+}
+
+.stairs .npc {
+    top: 23px;
+    left: 21px;
+}
+
+#cabin li:nth-child(1) { left: 0; top: 21px; }
+#cabin li:nth-child(2) { left: 76px; top: 23px; }
+#cabin li:nth-child(3) { left: 30px; top: 35px; }
+#cabin li:nth-child(4) { left: 85px; top: 45px; }
+#cabin li:nth-child(5) { left: -7px; top: 48px; }
+
+#cabin li:nth-child(2) .npc,
+#cabin li:nth-child(4) .npc,
+.stairs .npc, 
+.right {
+    -webkit-transform: scaleX(-1);
+    transform: scaleX(-1);
+}
+
+/* Corridor */
+
+.corridor {
+   position: absolute;
+   top: 190px;
+   left: 0;
+}
+.corridor .exit {
+    height: 250px;
+    overflow: hidden;
+}
+.corridor .npc {
+    display: block;
+    width:113px;
+    height: 200px;
+    background-size: auto 200px;
+}
+.corridor .waiting li:nth-child(1) .npc,
+.corridor .waiting li:nth-child(2) .npc {  
+    -webkit-transform: scaleX(-1);
+    transform: scaleX(-1);
+}
+
+.corridor .waiting li:nth-child(1) { left: 335px; top: 17px; }
+.corridor .waiting li:nth-child(2) { left: 380px; top: 87px; z-index: 1; }
+.corridor .waiting li:nth-child(2) .npc { height: 154px; }
+.corridor .waiting li:nth-child(3) { left: 268px; top: 58px; z-index: 1; }
+.corridor .waiting li:nth-child(3) .npc { height: 182px; }
+.corridor .waiting li:nth-child(4) { left: 200px; top: 30px; }
+.corridor .waiting li:nth-child(5) { left: 150px; top: 75px; z-index: 1;}
+.corridor .waiting li:nth-child(5) .npc { height: 165px; }
+.corridor .waiting li:nth-child(6) { left: 110px; top: 7px; }
+.corridor .waiting li:nth-child(7) { left: 86px; top: 50px; }
+.corridor .waiting li:nth-child(8) { left: 60px; top: 100px; z-index: 2; }
+.corridor .waiting li:nth-child(8) .npc { height: 140px; }
+.corridor .waiting li:nth-child(9) { left: 14px; top: 26px; }
+.corridor .waiting li:nth-child(10) { left: -10px; top: 75px; z-index: 1; }
+.corridor .waiting li:nth-child(10) .npc { height: 165px; }
+.corridor .waiting li:nth-child(11) { left: -55px; top: 40px; }
+
+.corridor .exit li:nth-child(1) { left: 325px; top: 28px; pointer-events: none; }
+.corridor .exit li:nth-child(2) { left: 420px; top: 45px; pointer-events: none; }

@@ -11,7 +11,7 @@
 </head>
 <body>
     <div class="building">
-        <div id="cabin"></div>
+        <div id="cabin"><ul></ul></div>
         <div class="floor" id="floor1">
             <div class="digits">
             <ul>
@@ -26,10 +26,14 @@
             </div>
             <div class="door left"></div>
             <div class="door right"></div>
-            <div class="stair-door"></div>
             <div class="wall">
                 <a href="#" data-led-neo="11" data-r-btn="1100 Ω" class="callbtn up"  >Up</a>
                 <a href="#" data-led-neo="10" data-r-btn="1000 Ω" class="callbtn down">Down</a>
+            </div>
+            <div class="stairs"><ul><li class="stair-door"></li></ul></div>
+            <div class="corridor">
+                <ul class="waiting"></ul>
+                <ul class="exit"></ul>
             </div>
         </div>
         <div class="floor" id="floor0">
@@ -46,18 +50,26 @@
             </div>
             <div class="door left"></div>
             <div class="door right"></div>
-            <div class="stair-door"></div>
             <div class="wall">
                 <a href="#" data-led-neo="9" data-r-btn="900 Ω" class="callbtn up">Up</a>
-           </div>
+            </div>
+            <div class="stairs"><ul><li class="stair-door"></li></ul></div>
+            <div class="corridor">
+                <ul class="waiting"></ul>
+                <ul class="exit"></ul>
+            </div>
         </div>
         <div class="floor" id="floor3">
             <div class="door left"></div>
             <div class="door right"></div>
-            <div class="stair-door"></div>
             <div class="wall">
                 <a href="#" class="callbtn up">Up</a>
                 <a href="#" class="callbtn down">Down</a>
+            </div>
+            <div class="stairs"><ul><li class="stair-door"></li></ul></div>
+            <div class="corridor">
+                <ul class="waiting"></ul>
+                <ul class="exit"></ul>
             </div>
         </div>
         <div class="floor" id="floor2">
@@ -74,28 +86,40 @@
             </div>
             <div class="door left"></div>
             <div class="door right"></div>
-            <div class="stair-door"></div>
             <div class="wall">
                 <a href="#" data-led-neo="13" data-r-btn="1300 Ω" class="callbtn up">Up</a>
                 <a href="#" data-led-neo="12" data-r-btn="1200 Ω" class="callbtn down">Down</a>
+            </div>
+            <div class="stairs"><ul><li class="stair-door"></li></ul></div>
+            <div class="corridor">
+                <ul class="waiting"></ul>
+                <ul class="exit"></ul>
             </div>
         </div>
         <div class="floor" id="floor5">
             <div class="cabin"></div>
             <div class="door left"></div>
             <div class="door right"></div>
-            <div class="stair-door"></div>
             <div class="wall">
                 <a href="#" data-led-neo="18" class="callbtn down">Down</a>
+            </div>
+            <div class="stairs"><ul><li class="stair-door"></li></ul></div>
+            <div class="corridor">
+                <ul class="waiting"></ul>
+                <ul class="exit"></ul>
             </div>
         </div>
         <div class="floor" id="floor4">
             <div class="door left"></div>
             <div class="door right"></div>
-            <div class="stair-door"></div>
             <div class="wall">
                 <a href="#" class="callbtn up">Up</a>
                 <a href="#" class="callbtn down">Down</a>
+            </div>
+            <div class="stairs"><ul><li class="stair-door"></li></ul></div>
+            <div class="corridor">
+                <ul class="waiting"></ul>
+                <ul class="exit"></ul>
             </div>
         </div>
         <div class="panel">
@@ -233,6 +257,27 @@
             ),
             btn.addEventListener('mouseup', _ => updownButtons.none())
         })
+
+        // Panel drag&drop
+        let offsetX, offsetY;
+        const panel = document.querySelector('.panel');
+
+        panel.addEventListener('mousedown', e => {
+            e.preventDefault();
+
+            const r = panel.getBoundingClientRect();
+            const parentR = panel.parentElement.getBoundingClientRect();
+            const ox = parentR.left + e.clientX - r.left;
+            const oy = parentR.top  + e.clientY - r.top;
+            const move = e => {
+                panel.style.left = `${e.clientX - ox}px`;
+                panel.style.top  = `${e.clientY - oy}px`;
+            };
+            document.addEventListener('mousemove', move);
+            document.addEventListener('mouseup', () =>
+                document.removeEventListener('mousemove', move), { once: true }
+            );
+        });
     </script>
 </body>
 </html>
