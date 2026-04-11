@@ -361,6 +361,7 @@ li:has(a:hover) .mood {
 .corridor .exit {
     height: 250px;
     overflow: hidden;
+    pointer-events: none;
 }
 .corridor .npc {
     display: block;

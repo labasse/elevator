@@ -154,6 +154,10 @@
     </script>
     <script src="a.out.js"></script>
     <script type="module">
+        import makeDraggable from './js/DraggableDiv.js'
+
+        makeDraggable('.panel')
+
         const FLOOR_COUNT = 6;
         const FLOORS_BY_COLUMN = 2;
         const CABIN_FLOOR_X = 230;
@@ -217,7 +221,7 @@
         import Adafruit_NeoPixel from "./js/Adafruit_NeoPixel.js"
         import Adafruit_7segment from "./js/Adafruit_7segment.js"
         import LiquidCrystal_I2C from "./js/LiquidCrystal_I2C.js"
-        import ResistorLadder from "./js/ResistorLadder.js"
+        import ResistorLadderPushBtns from "./js/ResistorLadderPushBtns.js"
         import L293DMotors from "./js/L293DMotors.js"
         import Keypad from "./js/Keypad.js"
         import Wino from "./js/Wino.js"
@@ -232,7 +236,6 @@
         const segmentOnOff  = (s, v) => s.classList.toggle('sel', v)
         
         await window.wasmLoaded
-        const updownButtons = new ResistorLadder(Module, PIN_CALLBTNS, 10000)
         const components = [
             // Motors
             new L293DMotors      (Module, PIN_MOTORS, moveElevator, moveDoors),
@@ -246,38 +249,9 @@
             new Adafruit_7segment(Module, 0x71, segmentOnOff, '71'),
             new Adafruit_7segment(Module, 0x72, segmentOnOff, '72'),
             // Up/Down buttons
-            updownButtons
+            new ResistorLadderPushBtns(Module, PIN_CALLBTNS, 10000, 'btn')
         ]
-        const wino = new Wino(Module, components);
-        Array.from(document.querySelectorAll('*[data-r-btn]')).forEach(btn=> {
-            btn.addEventListener('mousedown', _ => 
-                updownButtons.resistor(
-                    parseInt(btn.getAttribute('data-r-btn'))
-                )
-            ),
-            btn.addEventListener('mouseup', _ => updownButtons.none())
-        })
-
-        // Panel drag&drop
-        let offsetX, offsetY;
-        const panel = document.querySelector('.panel');
-
-        panel.addEventListener('mousedown', e => {
-            e.preventDefault();
-
-            const r = panel.getBoundingClientRect();
-            const parentR = panel.parentElement.getBoundingClientRect();
-            const ox = parentR.left + e.clientX - r.left;
-            const oy = parentR.top  + e.clientY - r.top;
-            const move = e => {
-                panel.style.left = `${e.clientX - ox}px`;
-                panel.style.top  = `${e.clientY - oy}px`;
-            };
-            document.addEventListener('mousemove', move);
-            document.addEventListener('mouseup', () =>
-                document.removeEventListener('mousemove', move), { once: true }
-            );
-        });
+        const wino = new Wino(Module, components)
     </script>
 </body>
 </html>
