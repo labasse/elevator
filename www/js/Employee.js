@@ -1,5 +1,3 @@
-const MAX_PASSENGERS = 5
-
 const STATE_WORKING  = 0
 const STATE_ARRIVE   = 5
 const STATE_CALL     = 10
@@ -29,18 +27,16 @@ const TIME_LEAVE    = 4000
 const BTN_PRESSED   = true
 const BTN_RELEASED  = false
 
-const PRESENCE_DELTA  = 500
-const PRESENCE_ON     = -1
-const PRESENCE_OFF    = 1
+const PRESENCE_DELTA  = -500
 
-const PRESSURE_PER_KG = 3
+const PRESSURE_PER_KG = 1
 const PRESSURE_ADD    = 1
 const PRESSURE_REM    = -1
 
 export default class Employee {
     #building
     #state = STATE_WORKING
-    #floor  = 0
+    #floor
     #target = 0
     #time   = 0
     #li = null
@@ -54,6 +50,7 @@ export default class Employee {
         this.#minWorkTime = minWorkTime
         this.#maxWorkTime = maxWorkTime
         this.#building = building
+        this.#floor = Math.floor(Math.random()*building.floorCount())
         this.#worktime = Math.random() * (maxWorkTime - minWorkTime)
         this.#weight = weight
         this.#character = character
@@ -99,8 +96,8 @@ export default class Employee {
                 break
             case STATE_ENTER:
                 this.#waitBefore(STATE_MOVE0, during, TIME_ENTER, () => {
-                    this.#updatePresence(PRESENCE_OFF)
                     this.#cabinButton(BTN_RELEASED)
+                    this.#building.endPass()
                 })
                 break
             case STATE_MOVE0: this.#tryGetOut(this.#target) || this.#waitBefore(STATE_MOVE1, during, TIME_MOVE0, ()=>{
@@ -116,7 +113,7 @@ export default class Employee {
                 const ok = this.#floor==this.#target
 
                 this.#waitBefore(ok ? STATE_LEAVE : STATE_STAIRS, during, TIME_GETOUT, () => {
-                    this.#updatePresence(PRESENCE_OFF)
+                    this.#building.endPass()
                     this.#updatePressure(PRESSURE_REM)
                     this.#addTo(this.#myFloorRoot(), ok ? '.corridor .exit':'.stairs ul', !ok, false)
                 })
@@ -126,14 +123,13 @@ export default class Employee {
         }
     }
     #tryGetOut(target=undefined) {
-        if(!this.#building.canPass(target)) 
+        if(!this.#building.beginPass(target, PRESENCE_DELTA, 'presence')) 
             return false
         this.#floor = this.#building.elevatorFloor()
         if(this.#floor!=this.#target) {
             this.#updateMood(true)
         }
         this.#state = STATE_GETOUT
-        this.#updatePresence(PRESENCE_ON)
         return true
     }
     #waitBefore(nextState, delta, time, initStateCallback) {
@@ -150,14 +146,8 @@ export default class Employee {
         })
     }
     #updatePressure(sign) {
-        this.#updateAnalog(sign, PRESSURE_PER_KG*this.#weight, 'pressure')
+        this.#building.analog(sign*PRESSURE_PER_KG*this.#weight, 'pressure')
     } 
-    #updatePresence(sign) {
-        this.#updateAnalog(sign, PRESENCE_DELTA, 'presence')
-    }
-    #updateAnalog(sign, constant, name) {
-        this.#building.analog(sign*constant, name)
-    }
     #callButton(pressed) {
         this.#building.button(
             pressed, 
@@ -172,13 +162,14 @@ export default class Employee {
         return this.#building.floor(this.#floor)
     }
     #tryEnter() {
-        if(!this.#building.canEnter(this.#floor, 'li', MAX_PASSENGERS)) {
-            return false
-        }
+        const entered = this.#building.beginPass(
+            this.#floor, PRESENCE_DELTA, 'presence', 
+            () => this.#building.isCabinFull()
+        )
+        if(!entered) return false
         this.#state = STATE_ENTER
         this.#time = 0
         this.#addTo(this.#building.cabin())
-        this.#updatePresence(PRESENCE_ON)
         this.#updatePressure(PRESSURE_ADD)
         this.#cabinButton(BTN_PRESSED)
         return true

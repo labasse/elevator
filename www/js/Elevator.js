@@ -1,3 +1,5 @@
+const MAX_PASSENGERS = 5
+
 export default class Building {
     #doors    = []
     #floors
@@ -11,10 +13,11 @@ export default class Building {
     #floorHeight
     #cabinOffsetX
     #cabinOffsetY
+    #cabinPassageState = null
     #buildingHeight
     #analog
     #buttons
-    
+
     constructor(selectors) {
         this.#floors = selectors.floors.map(sel => 
             document.querySelector(sel) 
@@ -80,16 +83,29 @@ export default class Building {
     floor(floorIndex) {
         return this.#floors[floorIndex]
     }
-    canPass(floor) {
+    isCabinFull() {
+        return this.#cabin.querySelectorAll('li').length < MAX_PASSENGERS
+    }
+    beginPass(floor, delta, name, additionalPredicate = undefined) {
+        if(this.#cabinPassageState) {
+            return false
+        }
         const cur = this.#currentFloor()
         const door = this.#doors[cur]
         
-        return (floor === undefined || cur == floor) 
-            && door.pos > door.width*2/3
+        if(floor !== undefined && cur != floor || 
+            door.pos < door.width*2/3 || 
+            additionalPredicate!==undefined && !additionalPredicate()
+        ) return false
+        this.analog(delta, name)
+        this.#cabinPassageState = { delta: -delta, name: name }
+        return true
     }
-    canEnter(floor, passengerSelector, capacity) {
-        return this.canPass(floor)
-            && this.#cabin.querySelectorAll(passengerSelector).length < capacity
+    endPass() {
+        const state = this.#cabinPassageState
+
+        this.analog(state.delta, state.name)
+        this.#cabinPassageState = null
     }
     #currentFloor() {
         return Math.floor(this.#position * this.#floorsByColumn / this.#columnHeight)
@@ -133,7 +149,7 @@ export default class Building {
         this.#buttons[name].dispatchEvent(e);
     }
     analog(delta, name) {
-        const val = this.#analog[name].value + delta
+        const val = parseInt(this.#analog[name].value) + delta
 
         this.#analog[name].value = delta < 0 
             ? Math.max(this.#analog[name].min, val) 
